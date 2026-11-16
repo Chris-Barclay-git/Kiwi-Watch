@@ -45,3 +45,10 @@
     flex: 1;
   }
 }
+
+.message {
+  margin: 0;
+  padding: 12px 0;
+  font-weight: 500;
+  color: var(--outline-dark);
+}

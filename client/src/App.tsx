@@ -2,16 +2,22 @@ import { useCallback, useState } from 'react'
 import styles from './App.module.css'
 import { NzMap } from './components/NzMap/NzMap'
 import { QuakeList } from './components/QuakeList/QuakeList'
-import { mockQuakes } from './data/mockQuakes'
+import { useQuakes } from './hooks/useQuakes'
 
 export default function App() {
+  // The quakes from our server. This is "loading", "error", or "ready" with a list.
+  const quakesState = useQuakes()
+
+  // Until the quakes arrive, we work with an empty list.
+  const quakes = quakesState.status === 'ready' ? quakesState.quakes : []
+
   // Which quake is selected. null means none yet.
   // It lives here so the map and the list can both use it.
   const [selectedQuakeId, setSelectedQuakeId] = useState<string | null>(null)
 
   // Look up the full quake from the selected id. "?? null" means none when nothing is selected.
   const selectedQuake =
-    mockQuakes.find((quake) => quake.id === selectedQuakeId) ?? null
+    quakes.find((quake) => quake.id === selectedQuakeId) ?? null
 
   // Closing the popup means "select nothing". useCallback keeps the same function
   // between renders, so the popup's Escape-key listener isn't re-created every time.
@@ -37,12 +43,25 @@ export default function App() {
           <h2 id="recent-quakes-heading" className={styles.panelTitle}>
             Recent quakes
           </h2>
-          <QuakeList
-            quakes={mockQuakes}
-            selectedQuakeId={selectedQuakeId}
-            onSelectQuake={setSelectedQuakeId}
-            now={now}
-          />
+
+          {quakesState.status === 'loading' && (
+            <p className={styles.message}>Loading quakes…</p>
+          )}
+
+          {quakesState.status === 'error' && (
+            <p className={styles.message}>
+              Sorry, we couldn't load the quakes. Try refreshing the page.
+            </p>
+          )}
+
+          {quakesState.status === 'ready' && (
+            <QuakeList
+              quakes={quakes}
+              selectedQuakeId={selectedQuakeId}
+              onSelectQuake={setSelectedQuakeId}
+              now={now}
+            />
+          )}
         </section>
       </div>
     </main>
