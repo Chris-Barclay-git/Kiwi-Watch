@@ -1,0 +1,75 @@
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* Each row is a button, so it works with keyboard and screen readers. */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  font: inherit;
+  text-align: left;
+  color: var(--outline-dark);
+  background: var(--land-highlight);
+  border: 3px solid var(--outline-dark);
+  border-radius: 12px;
+  box-shadow: 3px 4px 0 var(--sea-shadow);
+  cursor: pointer;
+  transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.row:hover {
+  transform: translate(-1px, -2px);
+}
+
+.row:focus-visible {
+  outline: 3px solid var(--sun-yellow);
+  outline-offset: 2px;
+}
+
+.selected {
+  background: var(--land-green);
+}
+
+.badge {
+  flex: none;
+  min-width: 3rem;
+  padding: 0.25rem 0.4rem;
+  font-weight: 600;
+  text-align: center;
+  color: white;
+  background: var(--outline-dark);
+  border-radius: 8px;
+}
+
+/* Bigger quakes get a warmer badge. */
+.strong {
+  background: var(--alert-coral);
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+}
+
+.locality {
+  font-weight: 500;
+}
+
+.time {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
+}

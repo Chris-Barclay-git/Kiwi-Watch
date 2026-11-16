@@ -1,0 +1,39 @@
+/* Both circles grow from their own centre, not the corner of the map. */
+.ring,
+.dot {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.ring {
+  fill: var(--alert-coral);
+  fill-opacity: 0.35;
+  stroke: var(--alert-coral);
+  stroke-width: 3;
+  animation: pulse 1.6s ease-out infinite;
+}
+
+.dot {
+  fill: var(--alert-coral);
+  stroke: var(--outline-dark);
+  stroke-width: 3;
+}
+
+/* The ring swells outward and fades, then starts again. */
+@keyframes pulse {
+  0% {
+    transform: scale(0.4);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* No pulsing for people who've asked for less motion. The ring stays still. */
+@media (prefers-reduced-motion: reduce) {
+  .ring {
+    animation: none;
+  }
+}

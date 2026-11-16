@@ -11,3 +11,37 @@
   font-size: 2rem;
   font-weight: 600;
 }
+
+/* Phone first: map on top, list underneath. */
+.layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 900px;
+}
+
+.panel {
+  width: 100%;
+  max-width: 420px;
+}
+
+.panelTitle {
+  margin: 0 0 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* On wider screens: map on the left, list on the right. */
+@media (min-width: 800px) {
+  .layout {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .panel {
+    flex: 1;
+  }
+}
