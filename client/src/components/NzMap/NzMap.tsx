@@ -8,6 +8,7 @@ import { MAP_HEIGHT, MAP_WIDTH } from '../../lib/projection'
 import type { Quake } from '../../types/quake'
 import { Island } from '../Island/Island'
 import { QuakeMarker } from '../QuakeMarker/QuakeMarker'
+import { QuakePopup } from '../QuakePopup/QuakePopup'
 import styles from './NzMap.module.css'
 
 // The islands we draw: a name for the tooltip, and the SVG shape built from the outline.
@@ -19,27 +20,41 @@ const ISLANDS = [
 
 interface NzMapProps {
   selectedQuake: Quake | null // the quake to mark on the map, or null for none
+  now: Date
+  onClosePopup: () => void
 }
 
-export function NzMap({ selectedQuake }: NzMapProps) {
-  // The viewBox is the map's own coordinate system (the same 500 wide by 710 tall
-  // that projectToMap uses). The browser scales it to fit the screen.
+export function NzMap({ selectedQuake, now, onClosePopup }: NzMapProps) {
   return (
-    <svg
-      className={styles.map}
-      viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`}
-      role="group"
-      aria-label="Map of New Zealand"
-    >
-      {ISLANDS.map((island) => (
-        <Island key={island.name} name={island.name} path={island.path} />
-      ))}
+    <div className={styles.wrapper}>
+      {/* The viewBox is the map's own coordinate system (the same 500 wide by 710 tall
+          that projectToMap uses). The browser scales it to fit the screen. */}
+      <svg
+        className={styles.map}
+        viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`}
+        role="group"
+        aria-label="Map of New Zealand"
+      >
+        {ISLANDS.map((island) => (
+          <Island key={island.name} name={island.name} path={island.path} />
+        ))}
 
-      {/* Drawn last so it sits on top of the islands.
-          The key restarts the pulse each time a different quake is picked. */}
+        {/* Drawn last so it sits on top of the islands.
+            The key restarts the pulse each time a different quake is picked. */}
+        {selectedQuake && (
+          <QuakeMarker key={selectedQuake.id} quake={selectedQuake} />
+        )}
+      </svg>
+
+      {/* The info card sits on top of the map, pointing at the marker. */}
       {selectedQuake && (
-        <QuakeMarker key={selectedQuake.id} quake={selectedQuake} />
+        <QuakePopup
+          key={selectedQuake.id}
+          quake={selectedQuake}
+          now={now}
+          onClose={onClosePopup}
+        />
       )}
-    </svg>
+    </div>
   )
 }

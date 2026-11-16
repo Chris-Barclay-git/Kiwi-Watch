@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import styles from './App.module.css'
 import { NzMap } from './components/NzMap/NzMap'
 import { QuakeList } from './components/QuakeList/QuakeList'
@@ -13,6 +13,10 @@ export default function App() {
   const selectedQuake =
     mockQuakes.find((quake) => quake.id === selectedQuakeId) ?? null
 
+  // Closing the popup means "select nothing". useCallback keeps the same function
+  // between renders, so the popup's Escape-key listener isn't re-created every time.
+  const clearSelection = useCallback(() => setSelectedQuakeId(null), [])
+
   const now = new Date()
 
   return (
@@ -20,7 +24,11 @@ export default function App() {
       <h1 className={styles.title}>Kiwi Watch</h1>
 
       <div className={styles.layout}>
-        <NzMap selectedQuake={selectedQuake} />
+        <NzMap
+          selectedQuake={selectedQuake}
+          now={now}
+          onClosePopup={clearSelection}
+        />
 
         <section
           className={styles.panel}
