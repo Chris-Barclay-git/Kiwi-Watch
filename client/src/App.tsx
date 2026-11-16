@@ -3,6 +3,7 @@ import styles from './App.module.css'
 import { NzMap } from './components/NzMap/NzMap'
 import { QuakeList } from './components/QuakeList/QuakeList'
 import { useQuakes } from './hooks/useQuakes'
+import { Disclaimer } from './components/Disclaimer/Disclaimer'
 
 export default function App() {
   // The quakes from our server. This is "loading", "error", or "ready" with a list.
@@ -64,6 +65,7 @@ export default function App() {
           )}
         </section>
       </div>
+      <Disclaimer />
     </main>
   )
 }
