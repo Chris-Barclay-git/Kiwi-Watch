@@ -1,0 +1,66 @@
+import type { Quake } from '../types/quake'
+
+// Fake quakes shaped like the real thing, so we can build the map before the server exists.
+export const mockQuakes: Quake[] = [
+  {
+    id: 'mock-1',
+    magnitude: 4.2,
+    depthKm: 12,
+    locality: '15 km north-east of Kaikōura',
+    time: '2026-11-17T01:23:45.000Z',
+    latitude: -42.3,
+    longitude: 173.84,
+    mmi: 4,
+  },
+  {
+    id: 'mock-2',
+    magnitude: 3.1,
+    depthKm: 6,
+    locality: '5 km north of Taupō',
+    time: '2026-11-17T00:10:12.000Z',
+    latitude: -38.64,
+    longitude: 176.07,
+    mmi: 3,
+  },
+  {
+    id: 'mock-3',
+    magnitude: 2.8,
+    depthKm: 25,
+    locality: '10 km south-west of Wellington',
+    time: '2026-11-16T22:45:30.000Z',
+    latitude: -41.35,
+    longitude: 174.7,
+    mmi: 2,
+  },
+  {
+    id: 'mock-4',
+    magnitude: 5.0,
+    depthKm: 30,
+    locality: '30 km south-west of Milford Sound',
+    time: '2026-11-16T18:02:09.000Z',
+    latitude: -44.9,
+    longitude: 167.5,
+    mmi: 5,
+  },
+  {
+    id: 'mock-5',
+    magnitude: 3.6,
+    depthKm: 18,
+    locality: '20 km north-east of Te Araroa',
+    time: '2026-11-16T14:37:51.000Z',
+    latitude: -37.5,
+    longitude: 178.5,
+    mmi: 3,
+  },
+  {
+    // Off the edge of our map, to check we handle it gracefully.
+    id: 'mock-6',
+    magnitude: 4.8,
+    depthKm: 90,
+    locality: 'Kermadec Islands',
+    time: '2026-11-16T09:15:00.000Z',
+    latitude: -30.5,
+    longitude: -177.9,
+    mmi: 2,
+  },
+]
