@@ -1,0 +1,7 @@
+.map {
+  display: block;
+  width: 100%;
+  max-width: 420px; /* keeps the map a sensible size on big screens */
+  height: auto; /* the viewBox keeps the proportions, so height follows width */
+  overflow: visible; /* lets outlines and shadows near the edge draw fully */
+}
