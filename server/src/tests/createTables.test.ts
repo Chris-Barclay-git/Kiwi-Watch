@@ -19,7 +19,7 @@ afterEach(async () => {
 })
 
 describe('createTables', () => {
-  it('creates the users, questions, options and user_answers tables', async () => {
+  it('creates the users, questions, options, user_answers and go_bag_items tables', async () => {
     // Arrange
     // (an empty database, made in beforeEach)
 
@@ -31,6 +31,7 @@ describe('createTables', () => {
     expect(await db.schema.hasTable('questions')).toBe(true)
     expect(await db.schema.hasTable('options')).toBe(true)
     expect(await db.schema.hasTable('user_answers')).toBe(true)
+    expect(await db.schema.hasTable('go_bag_items')).toBe(true)
   })
 
   it('leaves existing data alone when it is run again', async () => {
@@ -81,5 +82,21 @@ describe('createTables', () => {
     // Assert
     const users = await db('users').select()
     expect(users).toHaveLength(2)
+  })
+
+  it('does not let a user pack the same go bag item twice', async () => {
+    // Arrange
+    await createTables(db)
+    await db('users').insert({ auth0_id: 'auth0|abc' })
+    await db('go_bag_items').insert({ user_id: 1, item_id: 'water' })
+
+    // Act
+    const insertDuplicate = db('go_bag_items').insert({
+      user_id: 1,
+      item_id: 'water',
+    })
+
+    // Assert
+    await expect(insertDuplicate).rejects.toThrow()
   })
 })
