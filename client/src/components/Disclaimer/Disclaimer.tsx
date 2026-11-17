@@ -18,7 +18,18 @@ export function Disclaimer() {
         <a href="https://www.geonet.org.nz" className={styles.link}>
           GeoNet
         </a>
-        .
+        . Weather warnings are made freely available by{' '}
+        <a href="https://www.metservice.com" className={styles.link}>
+          MetService
+        </a>{' '}
+        under a{' '}
+        <a
+          href="https://creativecommons.org/licenses/by/4.0/"
+          className={styles.link}
+        >
+          CC BY 4.0
+        </a>{' '}
+        licence.
       </p>
     </footer>
   )
