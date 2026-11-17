@@ -52,3 +52,10 @@
   font-weight: 500;
   color: var(--outline-dark);
 }
+
+.updated {
+  margin: -0.4rem 0 0.75rem;
+  font-size: 0.85rem;
+  color: var(--outline-dark);
+  opacity: 0.75;
+}

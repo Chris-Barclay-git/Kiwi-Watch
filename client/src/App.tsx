@@ -44,6 +44,15 @@ export default function App() {
           <h2 id="recent-quakes-heading" className={styles.panelTitle}>
             Recent quakes
           </h2>
+          {quakesState.status === 'ready' && (
+            <p className={styles.updated}>
+              Updated{' '}
+              {quakesState.updatedAt.toLocaleTimeString('en-NZ', {
+                hour: 'numeric',
+                minute: '2-digit',
+              })}
+            </p>
+          )}
 
           {quakesState.status === 'loading' && (
             <p className={styles.message}>Loading quakes…</p>

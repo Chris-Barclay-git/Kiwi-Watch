@@ -15,6 +15,7 @@
     max-height: 75vh;
   }
 }
+
 /* Each row is a button, so it works with keyboard and screen readers. */
 .row {
   display: flex;
