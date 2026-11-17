@@ -7,6 +7,7 @@
   gap: 0.6rem;
   max-height: 50vh; /* the list scrolls inside this box */
   overflow-y: auto;
+  scrollbar-color: var(--outline-dark) transparent;
 }
 
 /* On wider screens there is more room, so the list can be taller. */

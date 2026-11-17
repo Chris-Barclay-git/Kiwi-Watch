@@ -166,3 +166,39 @@
     animation: none;
   }
 }
+
+/* On phones, shrink the card so it covers less of the map. */
+@media (max-width: 500px) {
+  .card {
+    --card-width: min(180px, 60vw);
+    padding: 0.5rem 0.65rem;
+    border-radius: 12px;
+  }
+
+  .headline {
+    gap: 0.4rem;
+    padding-right: 1.3rem;
+  }
+
+  .badge {
+    padding: 0.1rem 0.35rem;
+    font-size: 0.85rem;
+  }
+
+  .locality {
+    font-size: 0.85rem;
+  }
+
+  .facts {
+    gap: 0.8rem;
+    margin-top: 0.35rem;
+  }
+
+  .fact dt {
+    font-size: 0.7rem;
+  }
+
+  .fact dd {
+    font-size: 0.85rem;
+  }
+}
