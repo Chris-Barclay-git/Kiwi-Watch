@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest'
 import type { AnswerResult } from '../types/quiz'
 import { submitQuizAnswer } from '../lib/submitQuizAnswer'
 
+const ACCESS_TOKEN = 'test-token'
+
 const RIGHT_ANSWER_RESULT: AnswerResult = {
   isCorrect: true,
   correctOptionId: 1,
@@ -19,7 +21,7 @@ describe('submitQuizAnswer', () => {
       })) as typeof fetch
 
     // Act
-    const result = await submitQuizAnswer(1, 1, fakeFetch)
+    const result = await submitQuizAnswer(ACCESS_TOKEN, 1, 1, fakeFetch)
 
     // Assert
     expect(result).toEqual(RIGHT_ANSWER_RESULT)
@@ -36,7 +38,7 @@ describe('submitQuizAnswer', () => {
     }) as typeof fetch
 
     // Act
-    await submitQuizAnswer(1, 1, fakeFetch)
+    await submitQuizAnswer(ACCESS_TOKEN, 1, 1, fakeFetch)
 
     // Assert
     expect(requestedUrl).toBe('/api/quiz/answer')
@@ -52,15 +54,30 @@ describe('submitQuizAnswer', () => {
     }) as typeof fetch
 
     // Act
-    await submitQuizAnswer(3, 12, fakeFetch)
+    await submitQuizAnswer(ACCESS_TOKEN, 3, 12, fakeFetch)
 
     // Assert
     expect(JSON.parse(String(requestedInit?.body))).toEqual({
       questionId: 3,
       optionId: 12,
     })
+  })
+
+  it('sends the access token and says the body is JSON', async () => {
+    // Arrange
+    let requestedInit: RequestInit | undefined
+    const fakeFetch = (async (_url: string, init?: RequestInit) => {
+      requestedInit = init
+      return new Response(JSON.stringify(RIGHT_ANSWER_RESULT), { status: 200 })
+    }) as typeof fetch
+
+    // Act
+    await submitQuizAnswer(ACCESS_TOKEN, 1, 1, fakeFetch)
+
+    // Assert
     expect(requestedInit?.headers).toEqual({
       'Content-Type': 'application/json',
+      Authorization: 'Bearer test-token',
     })
   })
 
@@ -70,7 +87,7 @@ describe('submitQuizAnswer', () => {
       new Response('Not found', { status: 404 })) as typeof fetch
 
     // Act
-    const act = () => submitQuizAnswer(99, 1, fakeFetch)
+    const act = () => submitQuizAnswer(ACCESS_TOKEN, 99, 1, fakeFetch)
 
     // Assert
     await expect(act()).rejects.toThrow('Server responded with status 404')

@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest'
 import type { QuizQuestion } from '../types/quiz'
 import { fetchQuizQuestion } from '../lib/fetchQuizQuestion'
 
+const ACCESS_TOKEN = 'test-token'
+
 const EARTHQUAKE_QUESTION: QuizQuestion = {
   id: 1,
   topic: 'earthquakes',
@@ -21,7 +23,7 @@ describe('fetchQuizQuestion', () => {
       })) as typeof fetch
 
     // Act
-    const question = await fetchQuizQuestion(fakeFetch)
+    const question = await fetchQuizQuestion(ACCESS_TOKEN, fakeFetch)
 
     // Assert
     expect(question).toEqual(EARTHQUAKE_QUESTION)
@@ -35,7 +37,7 @@ describe('fetchQuizQuestion', () => {
       })) as typeof fetch
 
     // Act
-    const question = await fetchQuizQuestion(fakeFetch)
+    const question = await fetchQuizQuestion(ACCESS_TOKEN, fakeFetch)
 
     // Assert
     expect(question).toBeNull()
@@ -50,10 +52,27 @@ describe('fetchQuizQuestion', () => {
     }) as typeof fetch
 
     // Act
-    await fetchQuizQuestion(fakeFetch)
+    await fetchQuizQuestion(ACCESS_TOKEN, fakeFetch)
 
     // Assert
     expect(requestedUrl).toBe('/api/quiz/question')
+  })
+
+  it('sends the access token', async () => {
+    // Arrange
+    let requestedInit: RequestInit | undefined
+    const fakeFetch = (async (_url: string, init?: RequestInit) => {
+      requestedInit = init
+      return new Response(JSON.stringify({ question: null }), { status: 200 })
+    }) as typeof fetch
+
+    // Act
+    await fetchQuizQuestion(ACCESS_TOKEN, fakeFetch)
+
+    // Assert
+    expect(requestedInit?.headers).toEqual({
+      Authorization: 'Bearer test-token',
+    })
   })
 
   it('throws an error when the server responds with a failure status', async () => {
@@ -62,7 +81,7 @@ describe('fetchQuizQuestion', () => {
       new Response('Server error', { status: 500 })) as typeof fetch
 
     // Act
-    const act = () => fetchQuizQuestion(fakeFetch)
+    const act = () => fetchQuizQuestion(ACCESS_TOKEN, fakeFetch)
 
     // Assert
     await expect(act()).rejects.toThrow('Server responded with status 500')

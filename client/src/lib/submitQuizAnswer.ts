@@ -1,15 +1,20 @@
 import type { AnswerResult } from '../types/quiz'
 
 // Sends the user's chosen option to our server, which marks it.
+// The access token proves who the user is.
 // `fetchFunction` defaults to the real fetch. Tests pass in a fake one.
 export async function submitQuizAnswer(
+  accessToken: string,
   questionId: number,
   optionId: number,
   fetchFunction: typeof fetch = fetch,
 ): Promise<AnswerResult> {
   const response = await fetchFunction('/api/quiz/answer', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
     body: JSON.stringify({ questionId, optionId }),
   })
 

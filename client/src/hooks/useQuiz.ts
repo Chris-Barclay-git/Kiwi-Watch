@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
 import { fetchProfile } from '../lib/fetchProfile'
 import { fetchQuizQuestion } from '../lib/fetchQuizQuestion'
@@ -8,6 +9,7 @@ import type { AnswerResult, QuizQuestion } from '../types/quiz'
 // Where the quiz is up to. Each state carries what the screen needs to show it.
 export type QuizState =
   | { status: 'loading' } // fetching a question
+  | { status: 'loggedOut' } // the quiz is only for logged-in users
   | { status: 'error' } // something went wrong
   | { status: 'finished' } // every question has been answered correctly
   | { status: 'asking'; question: QuizQuestion } // waiting for the user to pick
@@ -24,17 +26,35 @@ function stateForQuestion(question: QuizQuestion | null): QuizState {
   return question ? { status: 'asking', question } : { status: 'finished' }
 }
 
+// Gets the user's login token from Auth0. If Auth0 gives us nothing, that is an error.
+async function requireToken(
+  getToken: () => Promise<string | undefined>,
+): Promise<string> {
+  const accessToken = await getToken()
+  if (!accessToken) {
+    throw new Error('Could not get a login token')
+  }
+  return accessToken
+}
+
 export function useQuiz() {
+  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
+
   const [state, setState] = useState<QuizState>({ status: 'loading' })
 
   // The user's XP and level. null until it has loaded.
   const [profile, setProfile] = useState<Profile | null>(null)
 
-  // Get the first question when the quiz appears.
+  // Once we know the user is logged in, get their first question and their profile.
   useEffect(() => {
+    if (!isAuthenticated) {
+      return
+    }
+
     let cancelled = false
 
-    fetchQuizQuestion()
+    requireToken(getAccessTokenSilently)
+      .then((accessToken) => fetchQuizQuestion(accessToken))
       .then((question) => {
         if (!cancelled) setState(stateForQuestion(question))
       })
@@ -42,27 +62,19 @@ export function useQuiz() {
         if (!cancelled) setState({ status: 'error' })
       })
 
-    // If the quiz disappears before the answer arrives, ignore the answer.
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  // Get the user's XP and level. The quiz works without it, so if this
-  // fails we just don't show the level.
-  useEffect(() => {
-    let cancelled = false
-
-    fetchProfile()
+    // The quiz works without the profile, so if this fails we just don't show the level.
+    requireToken(getAccessTokenSilently)
+      .then((accessToken) => fetchProfile(accessToken))
       .then((loadedProfile) => {
         if (!cancelled) setProfile(loadedProfile)
       })
       .catch(() => {})
 
+    // If the quiz disappears before the answers arrive, ignore them.
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [isAuthenticated, getAccessTokenSilently])
 
   // The user picked an option. Send it to the server and show what it says.
   async function chooseOption(optionId: number) {
@@ -74,7 +86,8 @@ export function useQuiz() {
     setState({ status: 'checking', question, chosenOptionId: optionId })
 
     try {
-      const result = await submitQuizAnswer(question.id, optionId)
+      const accessToken = await requireToken(getAccessTokenSilently)
+      const result = await submitQuizAnswer(accessToken, question.id, optionId)
       setState({
         status: 'answered',
         question,
@@ -83,7 +96,7 @@ export function useQuiz() {
       })
 
       // Update the level and progress bar. If this fails we keep the old ones.
-      fetchProfile()
+      fetchProfile(accessToken)
         .then(setProfile)
         .catch(() => {})
     } catch {
@@ -96,11 +109,22 @@ export function useQuiz() {
     setState({ status: 'loading' })
 
     try {
-      setState(stateForQuestion(await fetchQuizQuestion()))
+      const accessToken = await requireToken(getAccessTokenSilently)
+      setState(stateForQuestion(await fetchQuizQuestion(accessToken)))
     } catch {
       setState({ status: 'error' })
     }
   }
 
-  return { state, profile, chooseOption, nextQuestion }
+  // Once Auth0 has finished checking, a logged-out visitor sees the "log in" message,
+  // whatever the quiz state was before.
+  const isLoggedOut = !isLoading && !isAuthenticated
+  const visibleState: QuizState = isLoggedOut ? { status: 'loggedOut' } : state
+
+  return {
+    state: visibleState,
+    profile: isAuthenticated ? profile : null,
+    chooseOption,
+    nextQuestion,
+  }
 }

@@ -64,6 +64,12 @@ export function Quiz() {
         <p className={styles.message}>Loading a question…</p>
       )}
 
+      {state.status === 'loggedOut' && (
+        <p className={styles.message}>
+          Log in to play the prepper quiz and earn XP.
+        </p>
+      )}
+
       {state.status === 'error' && (
         <>
           <p className={styles.message}>Sorry, the quiz ran into a problem.</p>
