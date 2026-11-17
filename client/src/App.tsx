@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import styles from './App.module.css'
+import { AuthButton } from './components/AuthButton/AuthButton'
 import { Disclaimer } from './components/Disclaimer/Disclaimer'
 import { NzMap } from './components/NzMap/NzMap'
 import { QuakeList } from './components/QuakeList/QuakeList'
@@ -58,6 +59,8 @@ export default function App() {
   return (
     <main className={styles.page}>
       <h1 className={styles.title}>Kiwi Watch</h1>
+
+      <AuthButton />
 
       <div className={styles.layout}>
         <NzMap
