@@ -1,0 +1,14 @@
+/* The wrapper is the same size as the map, so the popup can sit on top of it
+   and be positioned as a percentage of the map. */
+.wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 420px; /* keeps the map a sensible size on big screens */
+}
+
+.map {
+  display: block;
+  width: 100%;
+  height: auto; /* the viewBox keeps the proportions, so height follows width */
+  overflow: visible; /* lets outlines and shadows near the edge draw fully */
+}

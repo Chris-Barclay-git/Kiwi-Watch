@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { magnitudeToRingSize } from './magnitude'
+import { magnitudeToRingSize } from '../lib/magnitude'
 
 describe('magnitudeToRingSize', () => {
   it('gives the smallest ring for the smallest magnitude', () => {

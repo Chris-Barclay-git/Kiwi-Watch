@@ -1,0 +1,54 @@
+/* One island is drawn as four stacked layers, bottom to top:
+   1. shadow  - a dark blue copy of the shape, pushed down and right
+   2. base    - yellow, with the thick dark outline
+   3. grass   - the green fill, shifted so a yellow edge peeks out at the top-left
+   4. outline - the dark outline again on top, so the edge stays crisp */
+
+.island {
+  cursor: pointer;
+}
+
+.shadow {
+  fill: var(--sea-shadow);
+  stroke: var(--sea-shadow);
+  stroke-width: 6;
+  stroke-linejoin: round;
+  transform: translate(5px, 7px);
+}
+
+/* Layers 2 to 4 sit inside "body" so they can move together on hover. */
+
+.body {
+  transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1); /* slight overshoot = bouncy */
+}
+
+.base {
+  fill: var(--land-highlight);
+  stroke: var(--outline-dark);
+  stroke-width: 5;
+  stroke-linejoin: round;
+}
+
+.grass {
+  fill: var(--land-green);
+}
+
+.outline {
+  fill: none;
+  stroke: var(--outline-dark);
+  stroke-width: 5;
+  stroke-linejoin: round;
+}
+
+/* On hover the island hops up and left. The shadow stays put,
+   so the gap between them makes it look like it lifted off the sea. */
+.island:hover .body {
+  transform: translate(-2px, -5px);
+}
+
+/* People who've asked their device for less motion get no animation. */
+@media (prefers-reduced-motion: reduce) {
+  .body {
+    transition: none;
+  }
+}

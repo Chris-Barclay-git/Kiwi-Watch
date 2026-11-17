@@ -5,7 +5,7 @@ import {
   NZ_BOUNDS,
   isInsideMap,
   projectToMap,
-} from './projection'
+} from '../lib/projection'
 
 // Real places we reuse as test data.
 const AUCKLAND = { latitude: -36.85, longitude: 174.76 }
