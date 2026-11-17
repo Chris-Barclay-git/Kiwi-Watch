@@ -40,15 +40,9 @@ export function isInsideMap(latitude: number, longitude: number): boolean {
   return isBetweenNorthAndSouth && isBetweenWestAndEast
 }
 
-// Returns null if the quake is off the edge of our map (e.g. the Kermadec Islands).
-export function projectToMap(
-  latitude: number,
-  longitude: number,
-): Point | null {
-  if (!isInsideMap(latitude, longitude)) {
-    return null
-  }
-
+// Works out the x/y position for a point. It doesn't check the point is on the map,
+// so the callers below make sure of that first.
+function toMapPoint(latitude: number, longitude: number): Point {
   // How far along the map is it? 0 = left/top edge, 1 = right/bottom edge.
   const fractionAcross = (longitude - NZ_BOUNDS.west) / degreesWide
   // North is the top of the map, so we measure down from the north edge.
@@ -58,4 +52,32 @@ export function projectToMap(
     x: fractionAcross * MAP_WIDTH,
     y: fractionDown * MAP_HEIGHT,
   }
+}
+
+// Returns null if the quake is off the edge of our map (e.g. the Kermadec Islands).
+export function projectToMap(
+  latitude: number,
+  longitude: number,
+): Point | null {
+  if (!isInsideMap(latitude, longitude)) {
+    return null
+  }
+
+  return toMapPoint(latitude, longitude)
+}
+
+function clamp(value: number, lowest: number, highest: number): number {
+  return Math.min(highest, Math.max(lowest, value))
+}
+
+// Like projectToMap, but a point off the edge is pulled back to the edge of the map
+// instead of being dropped. Used for weather shapes, which can reach out over the sea.
+export function projectToMapClamped(
+  latitude: number,
+  longitude: number,
+): Point {
+  return toMapPoint(
+    clamp(latitude, NZ_BOUNDS.south, NZ_BOUNDS.north),
+    clamp(longitude, NZ_BOUNDS.west, NZ_BOUNDS.east),
+  )
 }
