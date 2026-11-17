@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
+import { fetchProfile } from '../lib/fetchProfile'
 import { fetchQuizQuestion } from '../lib/fetchQuizQuestion'
 import { submitQuizAnswer } from '../lib/submitQuizAnswer'
+import type { Profile } from '../types/profile'
 import type { AnswerResult, QuizQuestion } from '../types/quiz'
 
 // Where the quiz is up to. Each state carries what the screen needs to show it.
@@ -25,8 +27,8 @@ function stateForQuestion(question: QuizQuestion | null): QuizState {
 export function useQuiz() {
   const [state, setState] = useState<QuizState>({ status: 'loading' })
 
-  // The user's total XP after their latest answer. null until they answer something.
-  const [totalXp, setTotalXp] = useState<number | null>(null)
+  // The user's XP and level. null until it has loaded.
+  const [profile, setProfile] = useState<Profile | null>(null)
 
   // Get the first question when the quiz appears.
   useEffect(() => {
@@ -46,6 +48,22 @@ export function useQuiz() {
     }
   }, [])
 
+  // Get the user's XP and level. The quiz works without it, so if this
+  // fails we just don't show the level.
+  useEffect(() => {
+    let cancelled = false
+
+    fetchProfile()
+      .then((loadedProfile) => {
+        if (!cancelled) setProfile(loadedProfile)
+      })
+      .catch(() => {})
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   // The user picked an option. Send it to the server and show what it says.
   async function chooseOption(optionId: number) {
     if (state.status !== 'asking') {
@@ -57,13 +75,17 @@ export function useQuiz() {
 
     try {
       const result = await submitQuizAnswer(question.id, optionId)
-      setTotalXp(result.totalXp)
       setState({
         status: 'answered',
         question,
         chosenOptionId: optionId,
         result,
       })
+
+      // Update the level and progress bar. If this fails we keep the old ones.
+      fetchProfile()
+        .then(setProfile)
+        .catch(() => {})
     } catch {
       setState({ status: 'error' })
     }
@@ -80,5 +102,5 @@ export function useQuiz() {
     }
   }
 
-  return { state, totalXp, chooseOption, nextQuestion }
+  return { state, profile, chooseOption, nextQuestion }
 }

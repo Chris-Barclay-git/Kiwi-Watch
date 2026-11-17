@@ -34,7 +34,7 @@ function verdictText(result: AnswerResult): string {
 }
 
 export function Quiz() {
-  const { state, totalXp, chooseOption, nextQuestion } = useQuiz()
+  const { state, profile, chooseOption, nextQuestion } = useQuiz()
 
   return (
     <section className={styles.quiz} aria-labelledby="quiz-heading">
@@ -42,8 +42,23 @@ export function Quiz() {
         <h2 id="quiz-heading" className={styles.title}>
           Prepper quiz
         </h2>
-        {totalXp !== null && <span className={styles.xp}>{totalXp} XP</span>}
+        {profile && <span className={styles.level}>Level {profile.level}</span>}
       </div>
+
+      {profile && (
+        <div className={styles.progressBlock}>
+          <progress
+            className={styles.progress}
+            value={profile.xpIntoLevel}
+            max={profile.xpPerLevel}
+            aria-label={`Progress to level ${profile.level + 1}`}
+          />
+          <p className={styles.progressText}>
+            {profile.xpIntoLevel} / {profile.xpPerLevel} XP to level{' '}
+            {profile.level + 1}
+          </p>
+        </div>
+      )}
 
       {state.status === 'loading' && (
         <p className={styles.message}>Loading a question…</p>

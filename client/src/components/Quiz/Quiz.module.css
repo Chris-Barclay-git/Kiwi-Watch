@@ -14,7 +14,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.6rem;
 }
 
 .title {
@@ -23,13 +23,49 @@
   font-weight: 600;
 }
 
-/* The user's total XP. */
-.xp {
+/* The user's level. */
+.level {
   padding: 0.2rem 0.7rem;
   font-weight: 600;
   color: white;
   background: var(--outline-dark);
   border-radius: 999px;
+}
+
+/* The bar showing how far through the current level the user is. */
+.progressBlock {
+  margin-bottom: 1rem;
+}
+
+.progress {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 16px;
+  appearance: none;
+  background: white;
+  border: 3px solid var(--outline-dark);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress::-webkit-progress-bar {
+  background: white;
+}
+
+.progress::-webkit-progress-value {
+  background: var(--land-green);
+  transition: width 300ms ease;
+}
+
+.progress::-moz-progress-bar {
+  background: var(--land-green);
+}
+
+.progressText {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+  opacity: 0.75;
 }
 
 .message {
@@ -143,6 +179,10 @@
 
 @media (prefers-reduced-motion: reduce) {
   .option {
+    transition: none;
+  }
+
+  .progress::-webkit-progress-value {
     transition: none;
   }
 }
