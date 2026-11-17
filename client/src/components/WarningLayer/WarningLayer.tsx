@@ -12,10 +12,15 @@ const LEVEL_ORDER: Record<WarningLevel, number> = {
 interface WarningLayerProps {
   warnings: Warning[]
   clipId: string // the id of a clip shape that cuts the colour to the land
+  onSelectWarning: (warningId: string) => void // called when an area is clicked
 }
 
 // Colours in the areas covered by weather warnings, inside the map's SVG.
-export function WarningLayer({ warnings, clipId }: WarningLayerProps) {
+export function WarningLayer({
+  warnings,
+  clipId,
+  onSelectWarning,
+}: WarningLayerProps) {
   const warningsWorstLast = [...warnings].sort(
     (a, b) => LEVEL_ORDER[a.level] - LEVEL_ORDER[b.level],
   )
@@ -34,6 +39,7 @@ export function WarningLayer({ warnings, clipId }: WarningLayerProps) {
             key={`${warning.id}-${index}`}
             className={`${styles.area} ${styles[warning.level]}`}
             d={polygonToPath(polygon)}
+            onClick={() => onSelectWarning(warning.id)}
           >
             <title>{`${warning.headline}: ${warning.areaDescription}`}</title>
           </path>

@@ -1,18 +1,25 @@
+/* The layer itself ignores the mouse, but each coloured area turns it back on,
+   so only the colours can be clicked and the rest of the island still works. */
 .layer {
   --warning-orange: #ff9f1c;
   --warning-red: #e63946;
 
-  /* For now the colour only decorates the map. Clicking comes in a later step. */
   pointer-events: none;
 }
 
-/* A dashed dark edge gives the "caution tape" look that suits the cartoon style. */
 .area {
   stroke: var(--outline-dark);
   stroke-width: 2.5;
   stroke-dasharray: 6 5;
   stroke-linejoin: round;
   fill-opacity: 0.8;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Hovering a warning makes it stand out a little. */
+.area:hover {
+  fill-opacity: 1;
 }
 
 .yellow {

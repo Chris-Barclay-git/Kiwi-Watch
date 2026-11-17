@@ -6,9 +6,10 @@ interface IslandProps {
   name: string // shown as a tooltip and read out by screen readers
   path: string // the SVG path that draws this island's shape
   warnings: Warning[] // weather warnings to colour in on this island
+  onSelectWarning: (warningId: string) => void // called when a warning is clicked
 }
 
-export function Island({ name, path, warnings }: IslandProps) {
+export function Island({ name, path, warnings, onSelectWarning }: IslandProps) {
   // The green layer is cut to the island's own shape, so it needs its own clip id.
   const clipId = `clip-${name.replace(/\s+/g, '-').toLowerCase()}`
 
@@ -37,7 +38,11 @@ export function Island({ name, path, warnings }: IslandProps) {
         </g>
 
         {/* Layer 4: weather colours, cut to this island so they hop with it */}
-        <WarningLayer warnings={warnings} clipId={clipId} />
+        <WarningLayer
+          warnings={warnings}
+          clipId={clipId}
+          onSelectWarning={onSelectWarning}
+        />
 
         {/* Layer 5: outline again on top to keep the edge crisp */}
         <path className={styles.outline} d={path} />

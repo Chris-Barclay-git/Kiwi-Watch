@@ -10,6 +10,7 @@ import type { Warning } from '../../types/warning'
 import { Island } from '../Island/Island'
 import { QuakeMarker } from '../QuakeMarker/QuakeMarker'
 import { QuakePopup } from '../QuakePopup/QuakePopup'
+import { WarningPopup } from '../WarningPopup/WarningPopup'
 import styles from './NzMap.module.css'
 
 // The islands we draw: a name for the tooltip, and the SVG shape built from the outline.
@@ -22,14 +23,18 @@ const ISLANDS = [
 interface NzMapProps {
   selectedQuake: Quake | null // the quake to mark on the map, or null for none
   warnings: Warning[] // the weather warnings to colour in
+  selectedWarning: Warning | null // the warning whose card is open, or null for none
   now: Date
-  onClosePopup: () => void
+  onSelectWarning: (warningId: string) => void
+  onClosePopup: () => void // closes whichever card is open
 }
 
 export function NzMap({
   selectedQuake,
   warnings,
+  selectedWarning,
   now,
+  onSelectWarning,
   onClosePopup,
 }: NzMapProps) {
   return (
@@ -49,6 +54,7 @@ export function NzMap({
             name={island.name}
             path={island.path}
             warnings={warnings}
+            onSelectWarning={onSelectWarning}
           />
         ))}
 
@@ -59,12 +65,20 @@ export function NzMap({
         )}
       </svg>
 
-      {/* The info card sits on top of the map, pointing at the marker. */}
+      {/* The info cards sit on top of the map, pointing at their spot. */}
       {selectedQuake && (
         <QuakePopup
           key={selectedQuake.id}
           quake={selectedQuake}
           now={now}
+          onClose={onClosePopup}
+        />
+      )}
+
+      {selectedWarning && (
+        <WarningPopup
+          key={selectedWarning.id}
+          warning={selectedWarning}
           onClose={onClosePopup}
         />
       )}
