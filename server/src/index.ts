@@ -1,3 +1,6 @@
+import { existsSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import express from 'express'
 import { auth } from 'express-oauth2-jwt-bearer'
 import { createApp } from './app'
 import type { QuizService } from './app'
@@ -15,7 +18,8 @@ import { fetchWarnings } from './lib/fetchWarnings'
 import type { Quake } from './types/quake'
 import type { Warning } from './types/warning'
 
-const PORT = 3001
+// Hosting services (like Render) tell us which port to use. Locally it's 3001.
+const PORT = Number(process.env.PORT ?? 3001)
 const ONE_MINUTE = 60_000
 const FIVE_MINUTES = 5 * ONE_MINUTE
 
@@ -23,6 +27,9 @@ const FIVE_MINUTES = 5 * ONE_MINUTE
 // When the app is deployed, they can be set with environment variables instead.
 const AUTH0_DOMAIN = process.env.AUTH0_DOMAIN ?? 'koanga-chris.au.auth0.com'
 const AUTH0_AUDIENCE = process.env.AUTH0_AUDIENCE ?? 'https://kiwi-watch/api'
+
+// The built React app. It only exists after running "npm run build" in client/.
+const CLIENT_DIST = fileURLToPath(new URL('../../client/dist', import.meta.url))
 
 // Put the pieces together. Each one is: cache + outside service -> getter.
 // Quakes can change any minute. Weather warnings change much less often.
@@ -63,6 +70,24 @@ async function start() {
   }
 
   const app = createApp(getQuakes, getWarnings, quiz, requireLogin)
+
+  // When the React app has been built, serve it from here too, so one server
+  // does everything. While developing there's no build, so Vite serves it instead.
+  if (existsSync(CLIENT_DIST)) {
+    app.use(express.static(CLIENT_DIST))
+
+    // For any other page address (like /quiz), send the React app and let
+    // its router show the right page. API addresses are left alone.
+    app.use((request, response, next) => {
+      if (request.method !== 'GET' || request.path.startsWith('/api')) {
+        next()
+        return
+      }
+      response.sendFile(`${CLIENT_DIST}/index.html`)
+    })
+
+    console.log('Serving the built client from', CLIENT_DIST)
+  }
 
   app.listen(PORT, () => {
     console.log(`Kiwi Watch server running at http://localhost:${PORT}`)
