@@ -1,3 +1,5 @@
+import { useRef } from 'react'
+import type { MouseEvent } from 'react'
 import {
   NORTH_ISLAND,
   SOUTH_ISLAND,
@@ -5,6 +7,7 @@ import {
 } from '../../data/nzOutline'
 import { outlineToPath } from '../../lib/outlineToPath'
 import { MAP_HEIGHT, MAP_WIDTH } from '../../lib/projection'
+import type { Point } from '../../lib/projection'
 import type { Quake } from '../../types/quake'
 import type { Warning } from '../../types/warning'
 import { Island } from '../Island/Island'
@@ -25,7 +28,7 @@ interface NzMapProps {
   warnings: Warning[] // the weather warnings to colour in
   selectedWarning: Warning | null // the warning whose card is open, or null for none
   now: Date
-  onSelectWarning: (warningId: string) => void
+  onSelectPoint: (point: Point) => void // called with the spot on the map that was clicked
   onClosePopup: () => void // closes whichever card is open
 }
 
@@ -34,14 +37,31 @@ export function NzMap({
   warnings,
   selectedWarning,
   now,
-  onSelectWarning,
+  onSelectPoint,
   onClosePopup,
 }: NzMapProps) {
+  const svgRef = useRef<SVGSVGElement>(null)
+
+  // Turns a click on the screen into a spot on the map's own 500 x 710 grid,
+  // then tells the app which spot was clicked.
+  function handleAreaClick(event: MouseEvent<SVGPathElement>) {
+    const screenToMap = svgRef.current?.getScreenCTM()?.inverse()
+    if (!screenToMap) {
+      return
+    }
+
+    const mapPoint = new DOMPoint(event.clientX, event.clientY).matrixTransform(
+      screenToMap,
+    )
+    onSelectPoint({ x: mapPoint.x, y: mapPoint.y })
+  }
+
   return (
     <div className={styles.wrapper}>
       {/* The viewBox is the map's own coordinate system (the same 500 wide by 710 tall
           that projectToMap uses). The browser scales it to fit the screen. */}
       <svg
+        ref={svgRef}
         className={styles.map}
         viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`}
         role="group"
@@ -54,7 +74,7 @@ export function NzMap({
             name={island.name}
             path={island.path}
             warnings={warnings}
-            onSelectWarning={onSelectWarning}
+            onSelectArea={handleAreaClick}
           />
         ))}
 

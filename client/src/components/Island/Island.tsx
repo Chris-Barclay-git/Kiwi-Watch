@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react'
 import type { Warning } from '../../types/warning'
 import { WarningLayer } from '../WarningLayer/WarningLayer'
 import styles from './Island.module.css'
@@ -6,10 +7,10 @@ interface IslandProps {
   name: string // shown as a tooltip and read out by screen readers
   path: string // the SVG path that draws this island's shape
   warnings: Warning[] // weather warnings to colour in on this island
-  onSelectWarning: (warningId: string) => void // called when a warning is clicked
+  onSelectArea: (event: MouseEvent<SVGPathElement>) => void // called when a warning area is clicked
 }
 
-export function Island({ name, path, warnings, onSelectWarning }: IslandProps) {
+export function Island({ name, path, warnings, onSelectArea }: IslandProps) {
   // The green layer is cut to the island's own shape, so it needs its own clip id.
   const clipId = `clip-${name.replace(/\s+/g, '-').toLowerCase()}`
 
@@ -41,7 +42,7 @@ export function Island({ name, path, warnings, onSelectWarning }: IslandProps) {
         <WarningLayer
           warnings={warnings}
           clipId={clipId}
-          onSelectWarning={onSelectWarning}
+          onSelectArea={onSelectArea}
         />
 
         {/* Layer 5: outline again on top to keep the edge crisp */}

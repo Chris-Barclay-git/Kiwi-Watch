@@ -5,6 +5,8 @@ import { NzMap } from './components/NzMap/NzMap'
 import { QuakeList } from './components/QuakeList/QuakeList'
 import { useQuakes } from './hooks/useQuakes'
 import { useWarnings } from './hooks/useWarnings'
+import type { Point } from './lib/projection'
+import { warningsAtPoint } from './lib/warningsAtPoint'
 
 export default function App() {
   // The quakes from our server. This is "loading", "error", or "ready" with a list.
@@ -18,27 +20,31 @@ export default function App() {
   const warnings =
     warningsState.status === 'ready' ? warningsState.warnings : []
 
-  // Which quake and which warning are selected. null means none.
+  // What is selected: a quake (by id) or a spot on the map that was clicked. null means none.
   // They live here so the map and the list can both use them.
   const [selectedQuakeId, setSelectedQuakeId] = useState<string | null>(null)
-  const [selectedWarningId, setSelectedWarningId] = useState<string | null>(
-    null,
-  )
+  const [selectedPoint, setSelectedPoint] = useState<Point | null>(null)
 
-  // Look up the full items from the selected ids. "?? null" means none when nothing is selected.
+  // Look up the full quake from the selected id. "?? null" means none when nothing is selected.
   const selectedQuake =
     quakes.find((quake) => quake.id === selectedQuakeId) ?? null
-  const selectedWarning =
-    warnings.find((warning) => warning.id === selectedWarningId) ?? null
+
+  // Every warning covering the clicked spot, worst first.
+  const warningsHere = selectedPoint
+    ? warningsAtPoint(warnings, selectedPoint)
+    : []
+
+  // For now the card shows the worst one. Next step: show them all.
+  const selectedWarning = warningsHere[0] ?? null
 
   // Only one card is open at a time, so picking one closes the other.
   function selectQuake(quakeId: string | null) {
     setSelectedQuakeId(quakeId)
-    setSelectedWarningId(null)
+    setSelectedPoint(null)
   }
 
-  function selectWarning(warningId: string) {
-    setSelectedWarningId(warningId)
+  function selectPoint(point: Point) {
+    setSelectedPoint(point)
     setSelectedQuakeId(null)
   }
 
@@ -46,7 +52,7 @@ export default function App() {
   // between renders, so the popups' Escape-key listeners aren't re-created every time.
   const clearSelection = useCallback(() => {
     setSelectedQuakeId(null)
-    setSelectedWarningId(null)
+    setSelectedPoint(null)
   }, [])
 
   const now = new Date()
@@ -61,7 +67,7 @@ export default function App() {
           warnings={warnings}
           selectedWarning={selectedWarning}
           now={now}
-          onSelectWarning={selectWarning}
+          onSelectPoint={selectPoint}
           onClosePopup={clearSelection}
         />
 
