@@ -1,4 +1,7 @@
 import { createApp } from './app'
+import { QUIZ_QUESTIONS } from './data/quizQuestions'
+import { db } from './db/connection'
+import { setupDatabase } from './db/setupDatabase'
 import { createCache } from './lib/createCache'
 import { createCachedGetter } from './lib/createCachedGetter'
 import { fetchQuakes } from './lib/fetchQuakes'
@@ -23,6 +26,17 @@ const getWarnings = createCachedGetter(
 
 const app = createApp(getQuakes, getWarnings)
 
-app.listen(PORT, () => {
-  console.log(`Kiwi Watch server running at http://localhost:${PORT}`)
+// Get the database ready first, then start listening for requests.
+async function start() {
+  await setupDatabase(db, QUIZ_QUESTIONS)
+  console.log('Database ready')
+
+  app.listen(PORT, () => {
+    console.log(`Kiwi Watch server running at http://localhost:${PORT}`)
+  })
+}
+
+start().catch((error) => {
+  console.error('The server could not start:', error)
+  process.exit(1)
 })
