@@ -1,17 +1,7 @@
-/* Same shape as the quake popup: a zero-size anchor sits on the point,
-   and the card is positioned relative to it so it always points at the right spot. */
-.anchor {
-  position: absolute;
-  width: 0;
-  height: 0;
-  z-index: 2;
-}
-
+/* The card sits in the normal page flow, just under the map. */
 .card {
-  --card-width: min(280px, 80vw);
-
-  position: absolute;
-  width: var(--card-width);
+  position: relative; /* so the close button can sit in the corner */
+  margin-top: 0.9rem;
   padding: 0.7rem 0.9rem;
   color: var(--outline-dark);
   background: var(--land-highlight);
@@ -19,64 +9,7 @@
   border-radius: 14px;
   box-shadow: 3px 4px 0 var(--sea-shadow);
   animation: pop-in 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* Which side of the point the card sits on. */
-.above {
-  bottom: 16px;
-  transform-origin: center bottom;
-}
-
-.below {
-  top: 16px;
   transform-origin: center top;
-}
-
-/* How the card lines up sideways with the point. */
-.center {
-  left: calc(var(--card-width) / -2);
-}
-
-.left {
-  left: -16px;
-}
-
-.right {
-  right: -16px;
-}
-
-/* The little arrow: a rotated square with two borders, so only the tip shows. */
-.tail {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  background: var(--land-highlight);
-  border: 3px solid var(--outline-dark);
-  transform: rotate(45deg);
-}
-
-.above .tail {
-  bottom: -10px;
-  border-top: none;
-  border-left: none;
-}
-
-.below .tail {
-  top: -10px;
-  border-right: none;
-  border-bottom: none;
-}
-
-.center .tail {
-  left: calc(50% - 7px);
-}
-
-.left .tail {
-  left: 9px;
-}
-
-.right .tail {
-  right: 9px;
 }
 
 .headline {
@@ -137,12 +70,8 @@
   font-weight: 500;
 }
 
-/* Long text scrolls inside the card. */
 .details {
-  max-height: 9rem;
   margin-top: 0.5rem;
-  padding-right: 0.3rem;
-  overflow-y: auto;
   font-size: 0.85rem;
   line-height: 1.35;
 }
@@ -183,7 +112,7 @@
 @keyframes pop-in {
   from {
     opacity: 0;
-    transform: scale(0.85);
+    transform: scale(0.92);
   }
   to {
     opacity: 1;
@@ -197,11 +126,10 @@
   }
 }
 
-/* On phones, shrink the card so it covers less of the map. */
+/* On phones, slightly tighter spacing. */
 @media (max-width: 500px) {
   .card {
-    --card-width: min(230px, 70vw);
-    padding: 0.5rem 0.65rem;
+    padding: 0.55rem 0.7rem;
     border-radius: 12px;
   }
 
@@ -216,15 +144,11 @@
   }
 
   .title {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
   }
 
-  .area {
-    font-size: 0.8rem;
-  }
-
+  .area,
   .details {
-    max-height: 6rem;
     font-size: 0.8rem;
   }
 }
