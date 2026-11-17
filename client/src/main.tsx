@@ -1,10 +1,18 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router'
 import './index.css'
 import App from './App.tsx'
+import { AuthProvider } from './components/AuthProvider/AuthProvider'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    {/* The router lets us have different pages at different addresses.
+        It wraps the login provider, which needs it to return to the right page. */}
+    <BrowserRouter>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </BrowserRouter>
   </StrictMode>,
 )

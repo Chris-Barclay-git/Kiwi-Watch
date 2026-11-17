@@ -1,0 +1,25 @@
+.nav {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.link {
+  padding: 0.3rem 1rem;
+  border: 3px solid var(--outline-dark);
+  border-radius: 999px;
+  background: white;
+  color: var(--outline-dark);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.link:hover {
+  background: var(--sun-yellow);
+}
+
+/* The page we're on right now */
+.active {
+  background: var(--sun-yellow);
+}

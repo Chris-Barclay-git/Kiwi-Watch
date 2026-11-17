@@ -1,0 +1,26 @@
+.loggedIn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--outline-dark);
+}
+
+.name {
+  font-weight: 500;
+}
+
+.button {
+  padding: 0.4rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  color: white;
+  background: var(--outline-dark);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.button:focus-visible {
+  outline: 3px solid var(--sun-yellow);
+  outline-offset: 2px;
+}

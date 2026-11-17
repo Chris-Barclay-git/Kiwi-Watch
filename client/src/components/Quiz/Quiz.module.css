@@ -1,0 +1,188 @@
+.quiz {
+  width: 100%;
+  max-width: 560px;
+  padding: 1rem;
+  color: var(--outline-dark);
+  background: var(--land-highlight);
+  border: 3px solid var(--outline-dark);
+  border-radius: 16px;
+  box-shadow: 3px 4px 0 var(--sea-shadow);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.6rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* The user's level. */
+.level {
+  padding: 0.2rem 0.7rem;
+  font-weight: 600;
+  color: white;
+  background: var(--outline-dark);
+  border-radius: 999px;
+}
+
+/* The bar showing how far through the current level the user is. */
+.progressBlock {
+  margin-bottom: 1rem;
+}
+
+.progress {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 16px;
+  appearance: none;
+  background: white;
+  border: 3px solid var(--outline-dark);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress::-webkit-progress-bar {
+  background: white;
+}
+
+.progress::-webkit-progress-value {
+  background: var(--land-green);
+  transition: width 300ms ease;
+}
+
+.progress::-moz-progress-bar {
+  background: var(--land-green);
+}
+
+.progressText {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+.message {
+  margin: 0 0 0.75rem;
+  font-weight: 500;
+}
+
+.topic {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.question {
+  margin: 0.25rem 0 0.75rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Each option is a button, so it works with keyboard and screen readers. */
+.option {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  font: inherit;
+  text-align: left;
+  color: var(--outline-dark);
+  background: white;
+  border: 3px solid var(--outline-dark);
+  border-radius: 12px;
+  box-shadow: 2px 3px 0 var(--sea-shadow);
+  cursor: pointer;
+  transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.option:hover:enabled {
+  transform: translate(-1px, -2px);
+}
+
+.option:focus-visible {
+  outline: 3px solid var(--sea-blue);
+  outline-offset: 2px;
+}
+
+.option:disabled {
+  cursor: default;
+}
+
+/* The option the user picked, while we wait for the server. */
+.chosen {
+  background: var(--sun-yellow);
+}
+
+/* After answering: the right option turns green, a wrong pick turns coral. */
+.correct {
+  background: var(--land-green);
+}
+
+.wrong {
+  color: white;
+  background: var(--alert-coral);
+}
+
+.dimmed {
+  opacity: 0.6;
+}
+
+.feedback {
+  margin-top: 0.9rem;
+  padding-top: 0.75rem;
+  border-top: 2px dashed var(--outline-dark);
+}
+
+.verdict {
+  margin: 0;
+  font-weight: 600;
+}
+
+.explanation {
+  margin: 0.4rem 0 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.next {
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  color: white;
+  background: var(--outline-dark);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.next:focus-visible {
+  outline: 3px solid var(--sea-blue);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .option {
+    transition: none;
+  }
+
+  .progress::-webkit-progress-value {
+    transition: none;
+  }
+}
