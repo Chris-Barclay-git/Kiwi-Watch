@@ -2,6 +2,7 @@ import cors from 'cors'
 import express from 'express'
 import type { RequestHandler } from 'express'
 import { parseAnswerRequest } from './lib/parseAnswerRequest'
+import type { Profile } from './types/profile'
 import type { Quake } from './types/quake'
 import type { AnswerResult, QuizQuestion } from './types/quiz'
 import type { Warning } from './types/warning'
@@ -16,6 +17,7 @@ export interface QuizService {
     questionId: number,
     optionId: number,
   ) => Promise<AnswerResult | null>
+  getProfile: () => Promise<Profile | null>
 }
 
 // Makes a route that sends back whatever `getData` gives us, as JSON.
@@ -76,6 +78,23 @@ export function createApp(
       500,
     ),
   )
+
+  // GET /api/quiz/profile -> the user's XP and level
+  app.get('/api/quiz/profile', async (_request, response) => {
+    try {
+      const profile = await quiz.getProfile()
+      if (!profile) {
+        response.status(404).json({ error: 'No profile found' })
+        return
+      }
+      response.json(profile)
+    } catch (error) {
+      console.error('Could not get the profile', error)
+      response
+        .status(500)
+        .json({ error: 'Could not get your profile right now' })
+    }
+  })
 
   // POST /api/quiz/answer with { questionId, optionId } -> whether it was right, and the XP
   app.post('/api/quiz/answer', async (request, response) => {

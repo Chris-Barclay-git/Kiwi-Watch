@@ -4,6 +4,7 @@ import { QUIZ_QUESTIONS } from './data/quizQuestions'
 import { db } from './db/connection'
 import { findOrCreateUser } from './db/findOrCreateUser'
 import { getNextQuestion } from './db/getNextQuestion'
+import { getProfile } from './db/getProfile'
 import { setupDatabase } from './db/setupDatabase'
 import { submitAnswer } from './db/submitAnswer'
 import { createCache } from './lib/createCache'
@@ -41,6 +42,7 @@ async function start() {
     getNextQuestion: () => getNextQuestion(db, testUserId),
     submitAnswer: (questionId, optionId) =>
       submitAnswer(db, testUserId, questionId, optionId),
+    getProfile: () => getProfile(db, testUserId),
   }
 
   const app = createApp(getQuakes, getWarnings, quiz)
