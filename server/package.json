@@ -13,9 +13,11 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "better-sqlite3": "^13.2.0",
     "cors": "^2.8.6",
     "express": "^5.3.0",
-    "fast-xml-parser": "^5.12.1"
+    "fast-xml-parser": "^5.12.1",
+    "knex": "^3.3.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
