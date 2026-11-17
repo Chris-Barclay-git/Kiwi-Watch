@@ -7,6 +7,7 @@ import type {
   Response,
 } from 'express'
 import { parseAnswerRequest } from './lib/parseAnswerRequest'
+import { parseItemId, parsePacked } from './lib/parseGoBagRequest'
 import type { Profile } from './types/profile'
 import type { Quake } from './types/quake'
 import type { AnswerResult, QuizQuestion } from './types/quiz'
@@ -25,6 +26,16 @@ export interface QuizService {
     optionId: number,
   ) => Promise<AnswerResult | null>
   getProfile: (auth0Id: string) => Promise<Profile | null>
+}
+
+// What the go bag routes need. Like the quiz, each one is told who is asking.
+export interface GoBagService {
+  getPackedItemIds: (auth0Id: string) => Promise<string[]>
+  setItemPacked: (
+    auth0Id: string,
+    itemId: string,
+    packed: boolean,
+  ) => Promise<void>
 }
 
 // Makes a route that sends back whatever `getData` gives us, as JSON.
@@ -79,20 +90,19 @@ const handleLoginErrors: ErrorRequestHandler = (
   next,
 ) => {
   if (error?.status === 401 || error?.status === 403) {
-    response
-      .status(error.status)
-      .json({ error: 'You need to log in to do that' })
+    response.status(error.status).json({ error: 'You need to log in to do that' })
     return
   }
   next(error)
 }
 
-// Builds the Express app. The data getters, the quiz and the login check are passed in,
+// Builds the Express app. The data getters, the services and the login check are passed in,
 // so the app doesn't need to know about GeoNet, MetService, the caches, the database or Auth0.
 export function createApp(
   getQuakes: GetQuakes,
   getWarnings: GetWarnings,
   quiz: QuizService,
+  goBag: GoBagService,
   requireLogin: RequestHandler,
 ) {
   const app = express()
@@ -118,8 +128,9 @@ export function createApp(
     ),
   )
 
-  // Everything under /api/quiz is for logged-in users only.
+  // Everything under /api/quiz and /api/go-bag is for logged-in users only.
   app.use('/api/quiz', requireLogin)
+  app.use('/api/go-bag', requireLogin)
 
   // GET /api/quiz/question -> { question: ... }, or { question: null } when all are done.
   // The question never says which option is correct.
@@ -175,6 +186,44 @@ export function createApp(
           return
         }
         response.json(result)
+      },
+    ),
+  )
+
+  // GET /api/go-bag -> { packedIds: [...] }, the items this user has packed
+  app.get(
+    '/api/go-bag',
+    forLoggedInUser(
+      'Could not get your go bag right now',
+      async (auth0Id, _request, response) => {
+        response.json({ packedIds: await goBag.getPackedItemIds(auth0Id) })
+      },
+    ),
+  )
+
+  // PUT /api/go-bag/:itemId with { packed: true } or { packed: false }
+  // -> { packedIds: [...] }, the updated list
+  app.put(
+    '/api/go-bag/:itemId',
+    forLoggedInUser(
+      'Could not save your go bag right now',
+      async (auth0Id, request, response) => {
+        const itemId = parseItemId(request.params.itemId)
+        if (!itemId) {
+          response.status(400).json({ error: 'That is not a valid item id' })
+          return
+        }
+
+        const packed = parsePacked(request.body)
+        if (packed === null) {
+          response
+            .status(400)
+            .json({ error: 'Send packed as true or false' })
+          return
+        }
+
+        await goBag.setItemPacked(auth0Id, itemId, packed)
+        response.json({ packedIds: await goBag.getPackedItemIds(auth0Id) })
       },
     ),
   )

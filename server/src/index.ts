@@ -3,12 +3,14 @@ import { fileURLToPath } from 'node:url'
 import express from 'express'
 import { auth } from 'express-oauth2-jwt-bearer'
 import { createApp } from './app'
-import type { QuizService } from './app'
+import type { GoBagService, QuizService } from './app'
 import { QUIZ_QUESTIONS } from './data/quizQuestions'
 import { db } from './db/connection'
 import { findOrCreateUser } from './db/findOrCreateUser'
 import { getNextQuestion } from './db/getNextQuestion'
+import { getPackedItemIds } from './db/getPackedItemIds'
 import { getProfile } from './db/getProfile'
+import { setItemPacked } from './db/setItemPacked'
 import { setupDatabase } from './db/setupDatabase'
 import { submitAnswer } from './db/submitAnswer'
 import { createCache } from './lib/createCache'
@@ -53,8 +55,8 @@ async function start() {
   await setupDatabase(db, QUIZ_QUESTIONS)
   console.log('Database ready')
 
-  // The quiz works out which user is asking from their Auth0 id.
-  // A user we haven't seen before is created the first time they play.
+  // The quiz and the go bag work out which user is asking from their Auth0 id.
+  // A user we haven't seen before is created the first time they use either.
   const quiz: QuizService = {
     getNextQuestion: async (auth0Id) =>
       getNextQuestion(db, await findOrCreateUser(db, auth0Id)),
@@ -69,7 +71,14 @@ async function start() {
       getProfile(db, await findOrCreateUser(db, auth0Id)),
   }
 
-  const app = createApp(getQuakes, getWarnings, quiz, requireLogin)
+  const goBag: GoBagService = {
+    getPackedItemIds: async (auth0Id) =>
+      getPackedItemIds(db, await findOrCreateUser(db, auth0Id)),
+    setItemPacked: async (auth0Id, itemId, packed) =>
+      setItemPacked(db, await findOrCreateUser(db, auth0Id), itemId, packed),
+  }
+
+  const app = createApp(getQuakes, getWarnings, quiz, goBag, requireLogin)
 
   // When the React app has been built, serve it from here too, so one server
   // does everything. While developing there's no build, so Vite serves it instead.
