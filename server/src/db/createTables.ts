@@ -1,7 +1,7 @@
 import type { Knex } from 'knex'
 
-// Creates the tables the quiz needs. Safe to run every time the server starts:
-// a table that already exists is left alone, with its data.
+// Creates the tables the app needs (the quiz and the go bag). Safe to run every time
+// the server starts: a table that already exists is left alone, with its data.
 export async function createTables(db: Knex): Promise<void> {
   if (!(await db.schema.hasTable('users'))) {
     await db.schema.createTable('users', (table) => {
@@ -38,6 +38,17 @@ export async function createTables(db: Knex): Promise<void> {
       table.integer('option_id').notNullable().references('options.id')
       table.boolean('is_correct').notNullable()
       table.timestamp('answered_at').notNullable().defaultTo(db.fn.now())
+    })
+  }
+
+  // One row for each go bag item a user has packed.
+  // The item id is the one used in the client's list of items (e.g. "water").
+  if (!(await db.schema.hasTable('go_bag_items'))) {
+    await db.schema.createTable('go_bag_items', (table) => {
+      table.integer('user_id').notNullable().references('users.id')
+      table.string('item_id').notNullable()
+      // A user can only pack each item once
+      table.primary(['user_id', 'item_id'])
     })
   }
 }

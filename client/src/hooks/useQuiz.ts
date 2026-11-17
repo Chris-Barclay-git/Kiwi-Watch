@@ -2,6 +2,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
 import { fetchProfile } from '../lib/fetchProfile'
 import { fetchQuizQuestion } from '../lib/fetchQuizQuestion'
+import { requireToken } from '../lib/requireToken'
 import { submitQuizAnswer } from '../lib/submitQuizAnswer'
 import type { Profile } from '../types/profile'
 import type { AnswerResult, QuizQuestion } from '../types/quiz'
@@ -24,17 +25,6 @@ export type QuizState =
 // A question means we ask it. No question means there are none left.
 function stateForQuestion(question: QuizQuestion | null): QuizState {
   return question ? { status: 'asking', question } : { status: 'finished' }
-}
-
-// Gets the user's login token from Auth0. If Auth0 gives us nothing, that is an error.
-async function requireToken(
-  getToken: () => Promise<string | undefined>,
-): Promise<string> {
-  const accessToken = await getToken()
-  if (!accessToken) {
-    throw new Error('Could not get a login token')
-  }
-  return accessToken
 }
 
 export function useQuiz() {
