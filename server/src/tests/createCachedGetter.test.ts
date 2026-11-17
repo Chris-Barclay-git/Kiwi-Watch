@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import type { Quake } from '../types/quake'
 import { createCache } from '../lib/createCache'
-import { createGetQuakes } from '../lib/createGetQuakes'
+import { createCachedGetter } from '../lib/createCachedGetter'
 
 const ONE_MINUTE = 60_000
 
@@ -16,12 +16,12 @@ const TAUPO_QUAKE: Quake = {
   mmi: 4,
 }
 
-describe('createGetQuakes', () => {
+describe('createCachedGetter', () => {
   it('asks GeoNet when the cache is empty', async () => {
     // Arrange
     const cache = createCache<Quake[]>(ONE_MINUTE, () => 0)
     const fetchQuakes = async () => [TAUPO_QUAKE]
-    const getQuakes = createGetQuakes(fetchQuakes, cache)
+    const getQuakes = createCachedGetter(fetchQuakes, cache)
 
     // Act
     const quakes = await getQuakes()
@@ -34,7 +34,7 @@ describe('createGetQuakes', () => {
     // Arrange
     const cache = createCache<Quake[]>(ONE_MINUTE, () => 0)
     const fetchQuakes = async () => [TAUPO_QUAKE]
-    const getQuakes = createGetQuakes(fetchQuakes, cache)
+    const getQuakes = createCachedGetter(fetchQuakes, cache)
 
     // Act
     await getQuakes()
@@ -51,7 +51,7 @@ describe('createGetQuakes', () => {
       timesGeoNetWasAsked += 1
       return [TAUPO_QUAKE]
     }
-    const getQuakes = createGetQuakes(fetchQuakes, cache)
+    const getQuakes = createCachedGetter(fetchQuakes, cache)
 
     // Act
     await getQuakes()
@@ -67,7 +67,7 @@ describe('createGetQuakes', () => {
     const fetchQuakes = async (): Promise<Quake[]> => {
       throw new Error('GeoNet responded with status 503')
     }
-    const getQuakes = createGetQuakes(fetchQuakes, cache)
+    const getQuakes = createCachedGetter(fetchQuakes, cache)
 
     // Act
     const act = () => getQuakes()
@@ -82,7 +82,7 @@ describe('createGetQuakes', () => {
     const fetchQuakes = async (): Promise<Quake[]> => {
       throw new Error('GeoNet responded with status 503')
     }
-    const getQuakes = createGetQuakes(fetchQuakes, cache)
+    const getQuakes = createCachedGetter(fetchQuakes, cache)
 
     // Act
     await getQuakes().catch(() => {})

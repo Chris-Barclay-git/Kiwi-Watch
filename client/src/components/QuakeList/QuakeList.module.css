@@ -1,10 +1,9 @@
+/* The scroll box that holds both groups of quakes. */
 .list {
-  list-style: none;
-  margin: 0;
-  padding: 4px 8px 8px 4px; /* room so row shadows and the hover hop aren't cut off */
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 1rem;
+  padding: 4px 8px 8px 4px; /* room so row shadows and the hover hop aren't cut off */
   max-height: 50vh; /* the list scrolls inside this box */
   overflow-y: auto;
   scrollbar-color: var(--outline-dark) transparent;
@@ -15,6 +14,23 @@
   .list {
     max-height: 75vh;
   }
+}
+
+.groupTitle {
+  margin: 0 0 0.5rem 0.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--outline-dark);
+  opacity: 0.75;
+}
+
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
 }
 
 /* Each row is a button, so it works with keyboard and screen readers. */

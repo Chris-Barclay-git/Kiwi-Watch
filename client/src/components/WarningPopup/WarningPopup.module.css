@@ -1,0 +1,174 @@
+/* The card sits in the normal page flow, just under the map. */
+.card {
+  position: relative; /* so the close button can sit in the corner */
+  margin-top: 0.9rem;
+  padding: 0.7rem 0.9rem;
+  color: var(--outline-dark);
+  background: var(--land-highlight);
+  border: 3px solid var(--outline-dark);
+  border-radius: 14px;
+  box-shadow: 3px 4px 0 var(--sea-shadow);
+  animation: pop-in 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: center top;
+}
+
+/* "2 alerts here", shown when more than one warning covers the spot. */
+.count {
+  margin: 0 0 0.5rem;
+  padding-right: 1.5rem; /* keeps the text clear of the close button */
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0.75;
+}
+
+/* Each warning in the card. A dashed line separates one from the next. */
+.warning + .warning {
+  margin-top: 0.7rem;
+  padding-top: 0.7rem;
+  border-top: 2px dashed var(--outline-dark);
+}
+
+.headline {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-right: 1.5rem; /* keeps the text clear of the close button */
+}
+
+.badge {
+  flex: none;
+  padding: 0.2rem 0.45rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--outline-dark);
+  border: 2px solid var(--outline-dark);
+  border-radius: 8px;
+}
+
+/* The badge colour matches the colour drawn on the map. */
+.yellow {
+  background: var(--sun-yellow);
+}
+
+.orange {
+  background: #ff9f1c;
+}
+
+.red {
+  color: white;
+  background: #e63946;
+}
+
+.title {
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.area {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+.facts {
+  display: flex;
+  gap: 1.2rem;
+  margin: 0.5rem 0 0;
+}
+
+.fact dt {
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+.fact dd {
+  margin: 0;
+  font-weight: 500;
+}
+
+.details {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  line-height: 1.35;
+}
+
+.details p {
+  margin: 0 0 0.5rem;
+  white-space: pre-line; /* keeps the line breaks MetService puts in the text */
+}
+
+.details p:last-child {
+  margin-bottom: 0;
+}
+
+.close {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.4rem;
+  width: 1.8rem;
+  height: 1.8rem;
+  font: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--outline-dark);
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.close:hover {
+  background: rgb(0 0 0 / 0.1);
+}
+
+.close:focus-visible {
+  outline: 3px solid var(--sun-yellow);
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation: none;
+  }
+}
+
+/* On phones, slightly tighter spacing. */
+@media (max-width: 500px) {
+  .card {
+    padding: 0.55rem 0.7rem;
+    border-radius: 12px;
+  }
+
+  .count {
+    padding-right: 1.3rem;
+  }
+
+  .headline {
+    gap: 0.4rem;
+    padding-right: 1.3rem;
+  }
+
+  .badge {
+    padding: 0.1rem 0.35rem;
+    font-size: 0.75rem;
+  }
+
+  .title {
+    font-size: 0.9rem;
+  }
+
+  .area,
+  .details {
+    font-size: 0.8rem;
+  }
+}
