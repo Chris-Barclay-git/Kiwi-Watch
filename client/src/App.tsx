@@ -3,6 +3,7 @@ import styles from './App.module.css'
 import { AuthButton } from './components/AuthButton/AuthButton'
 import { Disclaimer } from './components/Disclaimer/Disclaimer'
 import { NavBar } from './components/NavBar/NavBar'
+import { GoBagPage } from './pages/GoBagPage/GoBagPage'
 import { MapPage } from './pages/MapPage/MapPage'
 import { QuizPage } from './pages/QuizPage/QuizPage'
 
@@ -19,6 +20,7 @@ export default function App() {
 
       <Routes>
         <Route path="/" element={<MapPage />} />
+        <Route path="/go-bag" element={<GoBagPage />} />
         <Route path="/quiz" element={<QuizPage />} />
       </Routes>
 

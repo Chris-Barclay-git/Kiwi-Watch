@@ -17,6 +17,10 @@ export function NavBar() {
         Map
       </NavLink>
 
+      <NavLink to="/go-bag" className={linkClass}>
+        Go bag
+      </NavLink>
+
       {isAuthenticated && (
         <NavLink to="/quiz" className={linkClass}>
           Quiz
