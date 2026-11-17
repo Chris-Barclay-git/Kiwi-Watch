@@ -26,7 +26,7 @@ const ISLANDS = [
 interface NzMapProps {
   selectedQuake: Quake | null // the quake to mark on the map, or null for none
   warnings: Warning[] // the weather warnings to colour in
-  selectedWarning: Warning | null // the warning whose card is open, or null for none
+  selectedWarnings: Warning[] // the warnings covering the clicked spot (empty for none)
   now: Date
   onSelectPoint: (point: Point) => void // called with the spot on the map that was clicked
   onClosePopup: () => void // closes whichever card is open
@@ -35,7 +35,7 @@ interface NzMapProps {
 export function NzMap({
   selectedQuake,
   warnings,
-  selectedWarning,
+  selectedWarnings,
   now,
   onSelectPoint,
   onClosePopup,
@@ -95,10 +95,11 @@ export function NzMap({
         />
       )}
 
-      {selectedWarning && (
+      {/* The key changes when the set of warnings changes, so the card pops in again. */}
+      {selectedWarnings.length > 0 && (
         <WarningPopup
-          key={selectedWarning.id}
-          warning={selectedWarning}
+          key={selectedWarnings.map((warning) => warning.id).join('|')}
+          warnings={selectedWarnings}
           onClose={onClosePopup}
         />
       )}

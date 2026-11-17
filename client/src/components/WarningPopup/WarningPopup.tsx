@@ -24,11 +24,11 @@ function formatTime(time: string): string {
 }
 
 interface WarningPopupProps {
-  warning: Warning
+  warnings: Warning[] // every warning covering the clicked spot, worst first
   onClose: () => void
 }
 
-export function WarningPopup({ warning, onClose }: WarningPopupProps) {
+export function WarningPopup({ warnings, onClose }: WarningPopupProps) {
   const cardRef = useRef<HTMLDivElement>(null)
 
   // When the card opens, scroll it into view if it is off the screen (handy on phones).
@@ -47,8 +47,12 @@ export function WarningPopup({ warning, onClose }: WarningPopupProps) {
     return () => window.removeEventListener('keydown', closeOnEscape)
   }, [onClose])
 
-  const badgeClass = `${styles.badge} ${styles[warning.level]}`
-  const levelLabel = LEVEL_LABEL[warning.level]
+  const hasSeveral = warnings.length > 1
+
+  // One warning is described by its own name; several are described by how many there are.
+  const cardLabel = hasSeveral
+    ? `${warnings.length} weather alerts here`
+    : `${LEVEL_LABEL[warnings[0].level]} for ${warnings[0].areaDescription}`
 
   // The card sits just below the map, so it never covers the land.
   return (
@@ -56,7 +60,7 @@ export function WarningPopup({ warning, onClose }: WarningPopupProps) {
       ref={cardRef}
       className={styles.card}
       role="group"
-      aria-label={`${levelLabel} for ${warning.areaDescription}`}
+      aria-label={cardLabel}
     >
       <button
         type="button"
@@ -67,32 +71,42 @@ export function WarningPopup({ warning, onClose }: WarningPopupProps) {
         ×
       </button>
 
-      <div className={styles.headline}>
-        <span className={badgeClass}>{levelLabel}</span>
-        <span className={styles.title}>{warning.headline}</span>
-      </div>
+      {hasSeveral && (
+        <p className={styles.count}>{warnings.length} alerts here</p>
+      )}
 
-      <p className={styles.area}>{warning.areaDescription}</p>
+      {warnings.map((warning) => (
+        <section key={warning.id} className={styles.warning}>
+          <div className={styles.headline}>
+            <span className={`${styles.badge} ${styles[warning.level]}`}>
+              {LEVEL_LABEL[warning.level]}
+            </span>
+            <span className={styles.title}>{warning.headline}</span>
+          </div>
 
-      <dl className={styles.facts}>
-        <div className={styles.fact}>
-          <dt>From</dt>
-          <dd>{formatTime(warning.onset)}</dd>
-        </div>
-        <div className={styles.fact}>
-          <dt>Until</dt>
-          <dd>{formatTime(warning.expires)}</dd>
-        </div>
-      </dl>
+          <p className={styles.area}>{warning.areaDescription}</p>
 
-      <div className={styles.details}>
-        {warning.description && <p>{warning.description}</p>}
-        {warning.instruction && (
-          <p>
-            <strong>What to do:</strong> {warning.instruction}
-          </p>
-        )}
-      </div>
+          <dl className={styles.facts}>
+            <div className={styles.fact}>
+              <dt>From</dt>
+              <dd>{formatTime(warning.onset)}</dd>
+            </div>
+            <div className={styles.fact}>
+              <dt>Until</dt>
+              <dd>{formatTime(warning.expires)}</dd>
+            </div>
+          </dl>
+
+          <div className={styles.details}>
+            {warning.description && <p>{warning.description}</p>}
+            {warning.instruction && (
+              <p>
+                <strong>What to do:</strong> {warning.instruction}
+              </p>
+            )}
+          </div>
+        </section>
+      ))}
     </div>
   )
 }

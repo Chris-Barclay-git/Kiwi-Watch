@@ -34,9 +34,6 @@ export default function App() {
     ? warningsAtPoint(warnings, selectedPoint)
     : []
 
-  // For now the card shows the worst one. Next step: show them all.
-  const selectedWarning = warningsHere[0] ?? null
-
   // Only one card is open at a time, so picking one closes the other.
   function selectQuake(quakeId: string | null) {
     setSelectedQuakeId(quakeId)
@@ -65,7 +62,7 @@ export default function App() {
         <NzMap
           selectedQuake={selectedQuake}
           warnings={warnings}
-          selectedWarning={selectedWarning}
+          selectedWarnings={warningsHere}
           now={now}
           onSelectPoint={selectPoint}
           onClosePopup={clearSelection}

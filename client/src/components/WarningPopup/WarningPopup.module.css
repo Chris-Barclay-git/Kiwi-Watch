@@ -12,6 +12,22 @@
   transform-origin: center top;
 }
 
+/* "2 alerts here", shown when more than one warning covers the spot. */
+.count {
+  margin: 0 0 0.5rem;
+  padding-right: 1.5rem; /* keeps the text clear of the close button */
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0.75;
+}
+
+/* Each warning in the card. A dashed line separates one from the next. */
+.warning + .warning {
+  margin-top: 0.7rem;
+  padding-top: 0.7rem;
+  border-top: 2px dashed var(--outline-dark);
+}
+
 .headline {
   display: flex;
   align-items: center;
@@ -131,6 +147,10 @@
   .card {
     padding: 0.55rem 0.7rem;
     border-radius: 12px;
+  }
+
+  .count {
+    padding-right: 1.3rem;
   }
 
   .headline {
