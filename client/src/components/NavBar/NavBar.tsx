@@ -21,6 +21,10 @@ export function NavBar() {
         Go bag
       </NavLink>
 
+      <NavLink to="/get-ready" className={linkClass}>
+        Get ready
+      </NavLink>
+
       {isAuthenticated && (
         <NavLink to="/quiz" className={linkClass}>
           Quiz
