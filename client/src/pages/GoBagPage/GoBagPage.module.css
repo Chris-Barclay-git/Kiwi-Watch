@@ -19,6 +19,23 @@
   font-size: 0.95rem;
 }
 
+/* "Loading", "log in" and error notes */
+.message {
+  margin: 0;
+  font-weight: 700;
+}
+
+/* Shown when a tick couldn't be saved */
+.saveError {
+  margin: 0.6rem 0 0;
+  padding: 0.4rem 0.8rem;
+  border: 3px solid var(--outline-dark);
+  border-radius: 0.8rem;
+  background: var(--alert-coral);
+  color: white;
+  font-weight: 700;
+}
+
 /* The bar that fills as you pack */
 .progress {
   width: 100%;
