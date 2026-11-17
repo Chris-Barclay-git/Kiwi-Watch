@@ -3,6 +3,7 @@ import styles from './App.module.css'
 import { Disclaimer } from './components/Disclaimer/Disclaimer'
 import { NzMap } from './components/NzMap/NzMap'
 import { QuakeList } from './components/QuakeList/QuakeList'
+import { Quiz } from './components/Quiz/Quiz'
 import { useQuakes } from './hooks/useQuakes'
 import { useWarnings } from './hooks/useWarnings'
 import type { Point } from './lib/projection'
@@ -106,6 +107,8 @@ export default function App() {
           )}
         </section>
       </div>
+
+      <Quiz />
 
       <Disclaimer />
     </main>
