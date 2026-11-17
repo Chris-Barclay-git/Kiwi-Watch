@@ -6,6 +6,7 @@ import {
 import { outlineToPath } from '../../lib/outlineToPath'
 import { MAP_HEIGHT, MAP_WIDTH } from '../../lib/projection'
 import type { Quake } from '../../types/quake'
+import type { Warning } from '../../types/warning'
 import { Island } from '../Island/Island'
 import { QuakeMarker } from '../QuakeMarker/QuakeMarker'
 import { QuakePopup } from '../QuakePopup/QuakePopup'
@@ -20,11 +21,17 @@ const ISLANDS = [
 
 interface NzMapProps {
   selectedQuake: Quake | null // the quake to mark on the map, or null for none
+  warnings: Warning[] // the weather warnings to colour in
   now: Date
   onClosePopup: () => void
 }
 
-export function NzMap({ selectedQuake, now, onClosePopup }: NzMapProps) {
+export function NzMap({
+  selectedQuake,
+  warnings,
+  now,
+  onClosePopup,
+}: NzMapProps) {
   return (
     <div className={styles.wrapper}>
       {/* The viewBox is the map's own coordinate system (the same 500 wide by 710 tall
@@ -35,11 +42,17 @@ export function NzMap({ selectedQuake, now, onClosePopup }: NzMapProps) {
         role="group"
         aria-label="Map of New Zealand"
       >
+        {/* Each island draws its own weather colours, so they hop with it. */}
         {ISLANDS.map((island) => (
-          <Island key={island.name} name={island.name} path={island.path} />
+          <Island
+            key={island.name}
+            name={island.name}
+            path={island.path}
+            warnings={warnings}
+          />
         ))}
 
-        {/* Drawn last so it sits on top of the islands.
+        {/* Drawn last so it sits on top of everything.
             The key restarts the pulse each time a different quake is picked. */}
         {selectedQuake && (
           <QuakeMarker key={selectedQuake.id} quake={selectedQuake} />

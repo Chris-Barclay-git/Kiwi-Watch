@@ -1,9 +1,10 @@
 import { useCallback, useState } from 'react'
 import styles from './App.module.css'
+import { Disclaimer } from './components/Disclaimer/Disclaimer'
 import { NzMap } from './components/NzMap/NzMap'
 import { QuakeList } from './components/QuakeList/QuakeList'
 import { useQuakes } from './hooks/useQuakes'
-import { Disclaimer } from './components/Disclaimer/Disclaimer'
+import { useWarnings } from './hooks/useWarnings'
 
 export default function App() {
   // The quakes from our server. This is "loading", "error", or "ready" with a list.
@@ -11,6 +12,11 @@ export default function App() {
 
   // Until the quakes arrive, we work with an empty list.
   const quakes = quakesState.status === 'ready' ? quakesState.quakes : []
+
+  // The weather warnings, loaded the same way.
+  const warningsState = useWarnings()
+  const warnings =
+    warningsState.status === 'ready' ? warningsState.warnings : []
 
   // Which quake is selected. null means none yet.
   // It lives here so the map and the list can both use it.
@@ -33,6 +39,7 @@ export default function App() {
       <div className={styles.layout}>
         <NzMap
           selectedQuake={selectedQuake}
+          warnings={warnings}
           now={now}
           onClosePopup={clearSelection}
         />
@@ -44,6 +51,7 @@ export default function App() {
           <h2 id="recent-quakes-heading" className={styles.panelTitle}>
             Recent quakes
           </h2>
+
           {quakesState.status === 'ready' && (
             <p className={styles.updated}>
               Updated{' '}
@@ -74,6 +82,7 @@ export default function App() {
           )}
         </section>
       </div>
+
       <Disclaimer />
     </main>
   )

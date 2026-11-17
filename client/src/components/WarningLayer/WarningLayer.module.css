@@ -1,0 +1,28 @@
+.layer {
+  --warning-orange: #ff9f1c;
+  --warning-red: #e63946;
+
+  /* For now the colour only decorates the map. Clicking comes in a later step. */
+  pointer-events: none;
+}
+
+/* A dashed dark edge gives the "caution tape" look that suits the cartoon style. */
+.area {
+  stroke: var(--outline-dark);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 5;
+  stroke-linejoin: round;
+  fill-opacity: 0.8;
+}
+
+.yellow {
+  fill: var(--sun-yellow);
+}
+
+.orange {
+  fill: var(--warning-orange);
+}
+
+.red {
+  fill: var(--warning-red);
+}
